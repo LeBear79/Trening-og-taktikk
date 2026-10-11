@@ -348,7 +348,8 @@ function setWorkspace(type){
   let previous=null;try{previous=JSON.parse(localStorage.getItem('taktikk-workspace-'+type))}catch(e){}
   if(previous){try{state=normalizeState(previous)}catch(e){previous=null}}
   if(!previous){state=on?{format:5,positions:{},highlights:[],lines:[],frames:[],name:'',equipment:[],category:'Teknikk',description:'',exerciseBoard:true}:{...normalizeState({format:5}),exerciseBoard:false}}
-  state.exerciseBoard=on;playbackTime=0;history=[];future=[];
+  state.exerciseBoard=on;
+  if(!on){state.equipment=[];state.positions=Object.keys(state.positions).length?state.positions:freshPositions(state.format)}playbackTime=0;history=[];future=[];
  }
  enterBoard(type);workspace=type;
  $('format').closest('section').hidden=on;
@@ -371,7 +372,14 @@ function setBoardOnly(on){
  $('fullscreen').setAttribute('aria-pressed',String(active));
  (active?$('board-only-close'):$('board-only-trigger')).focus({preventScroll:true});
 }
-function init(){try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw?.state){state=normalizeState(raw.state);flipped=!!raw.flipped;if(palette.includes(raw.arrowColor))arrowColor=raw.arrowColor}else{state.positions=freshPositions(5)}}catch(_){state.positions=freshPositions(5)}try{const arr=JSON.parse(localStorage.getItem(LIBKEY)||'[]');saved=Array.isArray(arr)?arr.slice(0,200).filter(p=>p&&p.state&&p.id):[]}catch(_){saved=[]}
+function init(){try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw?.state){state=normalizeState(raw.state);flipped=!!raw.flipped;if(palette.includes(raw.arrowColor))arrowColor=raw.arrowColor}else{state.positions=freshPositions(5)}}catch(_){state.positions=freshPositions(5)}
+// Keep training equipment in the exercise workspace, never on the tactics pitch.
+try{
+ const tactics=JSON.parse(localStorage.getItem('taktikk-workspace-tactics')||'null');
+ if(tactics){state=normalizeState(tactics)}
+ else if(state.exerciseBoard){localStorage.setItem('taktikk-workspace-exercises',JSON.stringify(state));state=normalizeState({format:5})}
+}catch(_){state=normalizeState({format:5})}
+state.exerciseBoard=false;state.equipment=[];try{const arr=JSON.parse(localStorage.getItem(LIBKEY)||'[]');saved=Array.isArray(arr)?arr.slice(0,200).filter(p=>p&&p.state&&p.id):[]}catch(_){saved=[]}
 portrait=window.innerWidth<=730;W=portrait?650:1000;H=portrait?1000:650;svg.setAttribute('viewBox',`0 0 ${W} ${H}`);createMarkers();drawPitch();drawLines();drawTokens();drawEquipment();drawTrails();$('format').value=state.format;fillFormations();$('play-name').value=state.name;$('category').value=state.category||'Taktikk';$('description').value=state.description||'';buildSwatches();applyMode('move');updateFramesInfo();updateTimeline();renderSaved();
 svg.addEventListener('pointerdown',doDown);svg.addEventListener('pointermove',doMove);svg.addEventListener('pointerup',doUp);svg.addEventListener('pointercancel',doCancel);svg.addEventListener('contextmenu',e=>e.preventDefault());
 document.querySelectorAll('[data-tool]').forEach(b=>b.addEventListener('click',()=>applyMode(b.dataset.tool)));
