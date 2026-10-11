@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#101c30">
-<title>TaktikkTavla v3.2 – digital fotballtavle</title>
+<title>TaktikkTavla v3.2.1 – digital fotballtavle</title>
 <style>
 :root{color-scheme:dark;--bg:#0b1423;--panel:#152238;--panel2:#1b2c45;--border:#2c405b;--text:#ecf3ff;--muted:#abbdd2;--accent:#70d2b1;--yellow:#ffdf64;--radius:15px}
 *{box-sizing:border-box}body{background:var(--bg);color:var(--text);margin:0;font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.45}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
@@ -65,7 +65,7 @@ body.board-only #toast{z-index:105}
 </style>
 </head>
 <body>
-<header><div><h1>⚽ TaktikkTavla <small>v3.2</small></h1><p>Taktikk, øvelser, treningsplaner og oppmøte</p></div><nav class="global-nav" aria-label="Hovedmeny"><button type="button" class="btn primary" id="nav-tactics">⚽ Taktikk</button><button type="button" class="btn" id="nav-exercises">🚩 Øvelser</button><button type="button" class="btn" id="nav-trainings">📅 Treninger</button></nav><div class="status"><span id="status-dot" class="dot"></span><span id="status" class="badge">Klar til bruk</span></div></header>
+<header><div><h1>⚽ TaktikkTavla <small>v3.2.1</small></h1><p>Taktikk, øvelser, treningsplaner og oppmøte</p></div><nav class="global-nav" aria-label="Hovedmeny"><button type="button" class="btn primary" id="nav-tactics">⚽ Taktikk</button><button type="button" class="btn" id="nav-exercises">🚩 Øvelser</button><button type="button" class="btn" id="nav-trainings">📅 Treninger</button></nav><div class="status"><span id="status-dot" class="dot"></span><span id="status" class="badge">Klar til bruk</span></div></header>
 <div class="app">
 <aside class="sidebar">
 <section class="panel"><h2>Arbeidsområde</h2><div class="controls"><button class="btn primary" id="tab-tactics">⚽ Taktikk</button><button class="btn" id="tab-exercises">🚩 Øvelser</button><button class="btn wide" id="tab-trainings">📅 Treninger</button></div><p class="help" id="workspace-help">Tegning og animasjon av spillmønstre.</p><div id="exercise-tools" hidden><label class="field-label">Treningsutstyr</label><div class="controls"><button class="btn" data-add="cone">+ Kjegle</button><button class="btn" data-add="goal">+ Mål</button><button class="btn" data-add="pole">+ Stang</button><button class="btn" data-add="hurdle">+ Hekk</button><button class="btn" data-add="marker">+ Markør</button><button class="btn" data-add="ball">+ Ball</button></div><div class="controls" style="margin-top:8px"><button class="btn" id="clear-equipment">Fjern utstyr</button><button class="btn" id="toggle-pitch">Vis/skjul streker</button></div><p class="help">Dra utstyret dit du vil. Dobbelttrykk for å slette treningsutstyr.</p></div></section>
@@ -74,7 +74,7 @@ body.board-only #toast{z-index:105}
 <section class="panel"><h2><span class="num">3</span> Lagre taktikken</h2><label class="field-label" for="category">Kategori</label><select class="input" id="category"><option>Taktikk</option><option>Teknikk</option><option>Pasninger</option><option>Avslutning</option><option>Spilløvelse</option><option>Oppvarming</option><option>Annet</option></select><label class="field-label" for="play-name">Navn på øvelsen</label><input class="input" id="play-name" type="text" maxlength="60" placeholder="F.eks. Pasning og overlapp"><label class="field-label" for="description">Beskrivelse / trenerinstruks</label><textarea class="input" id="description" rows="3" placeholder="Mål, organisering, gjennomføring..."></textarea><button class="btn primary" id="save-play" style="width:100%;margin-top:8px">Lagre øvelse</button><div id="saved-plays"></div><div style="height:1px;background:var(--border);margin:14px 0"></div><div class="controls"><button class="btn" id="export">↓ Sikkerhetskopi</button><button class="btn" id="import-btn">↑ Hent inn fil</button></div><input type="file" id="import-file" hidden accept="application/json,.json"><p class="help">Øvelsene lagres i nettleseren. Last ned en sikkerhetskopi for å beholde dem ved bytte av enhet.</p></section>
 </aside>
 <main class="main">
-<div class="topbar"><button class="btn primary" id="return-to-training" hidden>← Tilbake til treningsplanen</button><button type="button" class="btn primary" id="board-only-trigger" aria-pressed="false">⛶ Vis bare banen</button><span id="mode-text" class="badge">Flytt spillere</span><span id="pitch-info" class="badge" aria-live="polite">5er · 20 × 30 m</span><span class="help" style="margin:0">Dobbeltklikk / dobbeltrykk på en spiller for gul markering. Flere kan markeres.</span></div>
+<div class="topbar"><button class="btn primary" id="return-to-training" hidden>← Tilbake til treningsplanen</button><button type="button" class="btn primary" id="board-only-trigger" aria-pressed="false">⛶ Vis bare banen</button><button type="button" class="btn" id="board-scroll-down" title="Hopp forbi banen og ned til avspilling">↓ Bla ned</button><span id="mode-text" class="badge">Flytt spillere</span><span id="pitch-info" class="badge" aria-live="polite">5er · 20 × 30 m</span><span class="help" style="margin:0">Dobbeltklikk / dobbeltrykk på en spiller for gul markering. Flere kan markeres.</span></div>
 <div class="board-tools"><div class="tool-grid" role="toolbar" aria-label="Tegneverktøy">
 <button class="btn selected" data-tool="move" title="Flytt spiller eller ball">✋ Flytt</button>
 <button class="btn" data-tool="solid" title="Tegn heltrukken pil">➜ Heltrukken pil</button>
@@ -154,7 +154,7 @@ body.board-only #toast{z-index:105}
   <div class="panel training-bottom"><p class="help">Personopplysninger og treningsdata lagres kun lokalt i nettleseren. Bruk sikkerhetskopi regelmessig, spesielt før du bytter telefon eller nettleser. Del ikke filer med spillernavn offentlig.</p></div>
 </section>
 
-<footer>Fungerer uten konto eller eksterne tjenester · Lagrer lokalt på denne enheten · TaktikkTavla v3.2</footer>
+<footer>Fungerer uten konto eller eksterne tjenester · Lagrer lokalt på denne enheten · TaktikkTavla v3.2.1</footer>
 <div id="toast" role="status" aria-live="polite"></div>
 <script>
 (()=>{'use strict';
@@ -359,6 +359,7 @@ $('timeline').addEventListener('input',e=>{if(!state.frames.length)return;pauseP
 $('save-play').addEventListener('click',savePlay);$('play-name').addEventListener('input',e=>{state.name=e.target.value;persist()});$('export').addEventListener('click',exportJson);$('import-btn').addEventListener('click',()=>$('import-file').click());$('import-file').addEventListener('change',importJson);
 $('fullscreen').addEventListener('click',()=>setBoardOnly(true));
  $('board-only-trigger').addEventListener('click',()=>setBoardOnly(true));
+ $('board-scroll-down').addEventListener('click',()=> $('timeline').scrollIntoView({behavior:'smooth',block:'start'}));
  $('board-only-close').addEventListener('click',()=>setBoardOnly(false));
  $('board-only-play').addEventListener('click',startPlayback);
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('board-only'))setBoardOnly(false)});
